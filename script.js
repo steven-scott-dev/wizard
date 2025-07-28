@@ -1,3 +1,34 @@
+// ...existing code...
+
+const introStep = document.getElementById('introStep');
+const wizardContainer = document.getElementById('wizardContainer');
+const knowWhatIWantBtn = document.getElementById('knowWhatIWantBtn');
+const helpMeDecideBtn = document.getElementById('helpMeDecideBtn');
+
+let userFlow = null; // 'modular' or 'guided'
+
+// When user clicks "I know what I want"
+if (knowWhatIWantBtn) {
+  knowWhatIWantBtn.addEventListener('click', () => {
+    userFlow = 'modular';
+    introStep.style.display = 'none';
+    wizardContainer.style.display = '';
+    showStep(1); // Start at first wizard step
+  });
+}
+
+// When user clicks "Help me decide"
+if (helpMeDecideBtn) {
+  helpMeDecideBtn.addEventListener('click', () => {
+    userFlow = 'guided';
+    introStep.style.display = 'none';
+    wizardContainer.style.display = '';
+    showStep(1); // Or showStep(1) if you want to start at the same step
+  });
+}
+
+// ...rest of your wizard logic...
+
 (function() {
   const steps = document.querySelectorAll('.step');
   const formSteps = document.querySelectorAll('.form-step');
@@ -21,12 +52,40 @@
   const previewCtaBtn = document.getElementById('previewCtaBtn');
   const sitePreview = document.getElementById('sitePreview');
 
+  // Intro step branching
+  const knowWhatIWantBtn = document.getElementById('knowWhatIWantBtn');
+  const helpMeDecideBtn = document.getElementById('helpMeDecideBtn');
+  let userFlow = null; // 'modular' or 'guided'
+
+  // Disable Next button on intro step until user chooses
+  if (currentStep === 1) nextBtn.disabled = true;
+
+  // When user clicks "I know what I want"
+  if (knowWhatIWantBtn) {
+    knowWhatIWantBtn.addEventListener('click', () => {
+      userFlow = 'modular';
+      nextBtn.disabled = false;
+      knowWhatIWantBtn.style.backgroundColor = '#2563eb';
+      helpMeDecideBtn.style.backgroundColor = '';
+    });
+  }
+
+  // When user clicks "Help me decide"
+  if (helpMeDecideBtn) {
+    helpMeDecideBtn.addEventListener('click', () => {
+      userFlow = 'guided';
+      nextBtn.disabled = false;
+      helpMeDecideBtn.style.backgroundColor = '#2563eb';
+      knowWhatIWantBtn.style.backgroundColor = '';
+    });
+  }
+
   // Update preview live
   function updatePreview() {
-    previewTitle.textContent = siteTitleInput.value || 'Your Website Title';
-    previewHeroText.textContent = heroTextInput.value || 'Your hero section text will appear here.';
-    previewCtaBtn.textContent = ctaTextInput.value || 'Call to Action';
-    sitePreview.style.setProperty('--primary-color', primaryColorInput.value);
+    if (previewTitle) previewTitle.textContent = siteTitleInput.value || 'Your Website Title';
+    if (previewHeroText) previewHeroText.textContent = heroTextInput.value || 'Your hero section text will appear here.';
+    if (previewCtaBtn) previewCtaBtn.textContent = ctaTextInput.value || 'Call to Action';
+    if (sitePreview) sitePreview.style.setProperty('--primary-color', primaryColorInput.value);
   }
 
   // Show step
@@ -41,13 +100,19 @@
     });
     prevBtn.disabled = step === 1;
     nextBtn.textContent = step === totalSteps ? 'Finish' : 'Next';
-    nextBtn.disabled = false;
+    // On intro step, require user to pick a flow before enabling Next
+    if (step === 1) {
+      nextBtn.disabled = !userFlow;
+    } else {
+      nextBtn.disabled = false;
+    }
     updatePreview();
   }
 
   // Validate current step inputs
   function validateStep() {
     const currentFormStep = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    if (!currentFormStep) return true;
     const inputs = currentFormStep.querySelectorAll('input[required], textarea[required]');
     for (const input of inputs) {
       if (!input.value.trim()) {
@@ -58,14 +123,23 @@
     return true;
   }
 
-  // Next button click
+  // Override nextBtn click to branch based on userFlow on step 1
   nextBtn.addEventListener('click', () => {
-    if (!validateStep()) return;
-    if (currentStep < totalSteps) {
-      showStep(currentStep + 1);
+    if (currentStep === 1) {
+      if (!userFlow) {
+        alert('Please select an option to continue.');
+        return;
+      }
+      // Both flows currently go to step 2; adjust as needed for your flow
+      showStep(2);
     } else {
-      // Finish clicked on last step
-      alert('You have completed the customization! Use the Export button to download your site.');
+      // Existing next button logic for other steps
+      if (!validateStep()) return;
+      if (currentStep < totalSteps) {
+        showStep(currentStep + 1);
+      } else {
+        alert('You have completed the customization! Use the Export button to download your site.');
+      }
     }
   });
 
@@ -95,7 +169,7 @@
 
   // Update preview on input change
   [siteTitleInput, heroTextInput, primaryColorInput, ctaTextInput].forEach(input => {
-    input.addEventListener('input', updatePreview);
+    if (input) input.addEventListener('input', updatePreview);
   });
 
   // Export button - generate a simple HTML file with the customized content
@@ -159,9 +233,4 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  });
-
-  // Initialize
-  showStep(1);
-  updatePreview();
-})();
+  }); })
