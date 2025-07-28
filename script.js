@@ -1,42 +1,62 @@
-// ...existing code...
-
 const introStep = document.getElementById('introStep');
+const modularSectionsStep = document.getElementById('modularSectionsStep');
 const wizardContainer = document.getElementById('wizardContainer');
 const knowWhatIWantBtn = document.getElementById('knowWhatIWantBtn');
 const helpMeDecideBtn = document.getElementById('helpMeDecideBtn');
+const modularBackBtn = document.getElementById('modularBackBtn');
+const modularNextBtn = document.getElementById('modularNextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const exportBtn = document.getElementById('exportBtn');
 
 let userFlow = null; // 'modular' or 'guided'
+let selectedSections = new Set();
 
-// When user clicks "I know what I want"
-if (knowWhatIWantBtn) {
-  knowWhatIWantBtn.addEventListener('click', () => {
-    userFlow = 'modular';
-    introStep.style.display = 'none';
-    wizardContainer.style.display = '';
-    showStep(1); // Start at first wizard step
+knowWhatIWantBtn.addEventListener('click', () => {
+  userFlow = 'modular';
+  introStep.style.display = 'none';
+  modularSectionsStep.style.display = 'block';
+  wizardContainer.style.display = 'none';
+  if (nextBtn) nextBtn.disabled = true;
+});
+
+helpMeDecideBtn.addEventListener('click', () => {
+  userFlow = 'guided';
+  introStep.style.display = 'none';
+  modularSectionsStep.style.display = 'none';
+  wizardContainer.style.display = 'block';
+  showStep(3); // Start at step 3 for guided flow
+  if (nextBtn) nextBtn.disabled = false;
+});
+
+modularBackBtn.addEventListener('click', () => {
+  modularSectionsStep.style.display = 'none';
+  introStep.style.display = 'block';
+  userFlow = null;
+  if (nextBtn) nextBtn.disabled = true;
+});
+
+modularNextBtn.addEventListener('click', () => {
+  selectedSections.clear();
+  document.querySelectorAll('#modularSectionsStep input[type="checkbox"]:checked').forEach(cb => {
+    selectedSections.add(cb.value);
   });
-}
 
-// When user clicks "Help me decide"
-if (helpMeDecideBtn) {
-  helpMeDecideBtn.addEventListener('click', () => {
-    userFlow = 'guided';
-    introStep.style.display = 'none';
-    wizardContainer.style.display = '';
-    showStep(1); // Or showStep(1) if you want to start at the same step
-  });
-}
+  if (selectedSections.size === 0) {
+    alert('Please select at least one section to continue.');
+    return;
+  }
 
-// ...rest of your wizard logic...
+  modularSectionsStep.style.display = 'none';
+  wizardContainer.style.display = 'block';
+  showStep(3); // Start wizard at step 3
+
+  // For debugging
+  console.log('Selected sections:', Array.from(selectedSections));
+});
 
 (function() {
-  const steps = document.querySelectorAll('.step');
-  const formSteps = document.querySelectorAll('.form-step');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const exportBtn = document.getElementById('exportBtn');
-  const form = document.getElementById('wizard-form');
-
+  const steps = Array.from(document.querySelectorAll('.form-step')).filter(fs => fs.dataset.step);
   let currentStep = 1;
   const totalSteps = steps.length;
 
@@ -46,72 +66,60 @@ if (helpMeDecideBtn) {
   const primaryColorInput = document.getElementById('primaryColor');
   const ctaTextInput = document.getElementById('ctaText');
 
-  // Preview elements
-  const previewTitle = document.getElementById('previewTitle');
-  const previewHeroText = document.getElementById('previewHeroText');
-  const previewCtaBtn = document.getElementById('previewCtaBtn');
-  const sitePreview = document.getElementById('sitePreview');
+  // Preview elements (if you add preview UI)
+  // const previewTitle = document.getElementById('previewTitle');
+  // const previewHeroText = document.getElementById('previewHeroText');
+  // const previewCtaBtn = document.getElementById('previewCtaBtn');
+  // const sitePreview = document.getElementById('sitePreview');
 
-  // Intro step branching
-  const knowWhatIWantBtn = document.getElementById('knowWhatIWantBtn');
-  const helpMeDecideBtn = document.getElementById('helpMeDecideBtn');
-  let userFlow = null; // 'modular' or 'guided'
-
-  // Disable Next button on intro step until user chooses
-  if (currentStep === 1) nextBtn.disabled = true;
-
-  // When user clicks "I know what I want"
-  if (knowWhatIWantBtn) {
-    knowWhatIWantBtn.addEventListener('click', () => {
-      userFlow = 'modular';
-      nextBtn.disabled = false;
-      knowWhatIWantBtn.style.backgroundColor = '#2563eb';
-      helpMeDecideBtn.style.backgroundColor = '';
-    });
-  }
-
-  // When user clicks "Help me decide"
-  if (helpMeDecideBtn) {
-    helpMeDecideBtn.addEventListener('click', () => {
-      userFlow = 'guided';
-      nextBtn.disabled = false;
-      helpMeDecideBtn.style.backgroundColor = '#2563eb';
-      knowWhatIWantBtn.style.backgroundColor = '';
-    });
-  }
-
-  // Update preview live
   function updatePreview() {
-    if (previewTitle) previewTitle.textContent = siteTitleInput.value || 'Your Website Title';
-    if (previewHeroText) previewHeroText.textContent = heroTextInput.value || 'Your hero section text will appear here.';
-    if (previewCtaBtn) previewCtaBtn.textContent = ctaTextInput.value || 'Call to Action';
-    if (sitePreview) sitePreview.style.setProperty('--primary-color', primaryColorInput.value);
+    // Implement preview updates if you have preview elements
   }
 
-  // Show step
   function showStep(step) {
     currentStep = step;
-    formSteps.forEach(fs => {
-      fs.classList.toggle('active', parseInt(fs.dataset.step) === step);
+
+    // Hide all steps first
+    steps.forEach(fs => {
+      fs.style.display = 'none';
+      fs.classList.remove('active');
     });
-    steps.forEach(s => {
-      s.classList.toggle('active', parseInt(s.dataset.step) === step);
-      s.classList.toggle('completed', parseInt(s.dataset.step) < step);
-    });
-    prevBtn.disabled = step === 1;
-    nextBtn.textContent = step === totalSteps ? 'Finish' : 'Next';
-    // On intro step, require user to pick a flow before enabling Next
-    if (step === 1) {
-      nextBtn.disabled = !userFlow;
-    } else {
-      nextBtn.disabled = false;
+
+    // Find the step element
+    const stepEl = steps.find(fs => parseInt(fs.dataset.step) === step);
+
+    // If modular flow, skip steps not in selectedSections
+    if (userFlow === 'modular' && stepEl) {
+      const section = stepEl.dataset.section;
+      // Show step only if section is selected or if no section attribute (like review step)
+      if (section && !selectedSections.has(section)) {
+        // Skip this step, go to next
+        const nextStep = step + 1;
+        if (nextStep <= totalSteps) {
+          showStep(nextStep);
+          return;
+        }
+      }
     }
+
+    if (stepEl) {
+      stepEl.style.display = 'block';
+      stepEl.classList.add('active');
+    }
+
+    // Enable/disable prev button
+    if (prevBtn) prevBtn.disabled = step === 3; // can't go back before step 3 in wizard
+
+    // Change next button text on last step
+    if (nextBtn) nextBtn.textContent = (step === totalSteps) ? 'Finish' : 'Next';
+
+    if (nextBtn) nextBtn.disabled = false;
+
     updatePreview();
   }
 
-  // Validate current step inputs
   function validateStep() {
-    const currentFormStep = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    const currentFormStep = steps.find(fs => parseInt(fs.dataset.step) === currentStep);
     if (!currentFormStep) return true;
     const inputs = currentFormStep.querySelectorAll('input[required], textarea[required]');
     for (const input of inputs) {
@@ -123,58 +131,57 @@ if (helpMeDecideBtn) {
     return true;
   }
 
-  // Override nextBtn click to branch based on userFlow on step 1
-  nextBtn.addEventListener('click', () => {
-    if (currentStep === 1) {
-      if (!userFlow) {
-        alert('Please select an option to continue.');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (userFlow === 'modular' && currentStep === 2) {
+        // This case handled by modularNextBtn, so disable Next here
         return;
       }
-      // Both flows currently go to step 2; adjust as needed for your flow
-      showStep(2);
-    } else {
-      // Existing next button logic for other steps
+
       if (!validateStep()) return;
-      if (currentStep < totalSteps) {
-        showStep(currentStep + 1);
-      } else {
+
+      const nextStep = currentStep + 1;
+
+      if (nextStep > totalSteps) {
         alert('You have completed the customization! Use the Export button to download your site.');
+        return;
       }
-    }
-  });
 
-  // Prev button click
-  prevBtn.addEventListener('click', () => {
-    if (currentStep > 1) {
-      showStep(currentStep - 1);
-    }
-  });
-
-  // Step click (for accessibility)
-  steps.forEach(stepEl => {
-    stepEl.addEventListener('click', () => {
-      const stepNum = parseInt(stepEl.dataset.step);
-      if (stepNum <= currentStep + 1) { // Allow going back or current+1 step only
-        if (stepNum > currentStep && !validateStep()) return;
-        showStep(stepNum);
-      }
+      showStep(nextStep);
     });
-    stepEl.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        stepEl.click();
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const prevStep = currentStep - 1;
+
+      if (prevStep < 3) {
+        // If modular flow, go back to modular selection or intro
+        if (userFlow === 'modular') {
+          wizardContainer.style.display = 'none';
+          modularSectionsStep.style.display = 'block';
+          currentStep = 2;
+          if (nextBtn) nextBtn.disabled = true;
+        } else {
+          // Guided flow goes back to intro
+          wizardContainer.style.display = 'none';
+          introStep.style.display = 'block';
+          currentStep = 1;
+          if (nextBtn) nextBtn.disabled = true;
+        }
+        return;
       }
+
+      showStep(prevStep);
     });
-  });
+  }
 
-  // Update preview on input change
-  [siteTitleInput, heroTextInput, primaryColorInput, ctaTextInput].forEach(input => {
-    if (input) input.addEventListener('input', updatePreview);
-  });
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      // Build HTML content dynamically based on selectedSections and inputs
+      // For simplicity, export all inputs here
 
-  // Export button - generate a simple HTML file with the customized content
-  exportBtn.addEventListener('click', () => {
-    const htmlContent = `
+      const htmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -222,15 +229,20 @@ if (helpMeDecideBtn) {
   <button>${ctaTextInput.value}</button>
 </body>
 </html>
-    `.trim();
+      `.trim();
 
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${siteTitleInput.value.replace(/\s+/g, '_').toLowerCase() || 'custom_website'}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }); })
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${siteTitleInput.value.replace(/\s+/g, '_').toLowerCase() || 'custom_website'}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Initialize wizard to show intro step
+  // (Already visible by default in HTML)
+})();

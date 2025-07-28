@@ -4,40 +4,97 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Website Wizard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Your existing HTML below -->
- <div id="introStep" class="form-step active">
-  <div class="intro-card">
-    <h2>Welcome!</h2>
-    <p>Do you already know what sections you want included in your webpage or would you like us to help you?</p>
-    <div style="display:flex; gap:1rem; margin-top:1rem;">
-      <button type="button" id="knowWhatIWantBtn">I know what I want</button>
-      <button type="button" id="helpMeDecideBtn">Help me decide</button>
+
+  <!-- Intro Step: User chooses flow -->
+  <div id="introStep" class="form-step active">
+    <div class="intro-card">
+      <h2>Welcome!</h2>
+      <p>Do you already know what sections you want included in your webpage or would you like us to help you?</p>
+      <div style="display:flex; gap:1rem; margin-top:1rem;">
+        <button type="button" id="knowWhatIWantBtn">I know what I want</button>
+        <button type="button" id="helpMeDecideBtn">Help me decide</button>
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- Modular Section Selection Step -->
+  <div id="modularSectionsStep" class="form-step" data-step="2" style="display:none;">
+    <h2>Select Your Website Sections</h2>
+    <p>Choose the sections you want to include on your website:</p>
+    <div class="section-checkboxes" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:1rem;">
+      <label class="section-item">
+        <input type="checkbox" name="section" value="about" checked /> About Us
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="services" checked /> Services
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="portfolio" /> Portfolio
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="gallery" /> Gallery
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="testimonials" /> Testimonials
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="team" /> Our Team
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="pricing" /> Pricing
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="faq" /> FAQ
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="blog" /> Blog/News
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="contact" checked /> Contact Us
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="cta_block" /> Additional CTA
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="partners" /> Partners
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="location" /> Location/Map
+      </label>
+      <label class="section-item">
+        <input type="checkbox" name="section" value="newsletter" /> Newsletter Signup
+      </label>
+    </div>
+
+    <div class="buttons" style="margin-top: 1.5rem;">
+      <button type="button" id="modularBackBtn">Back</button>
+      <button type="button" id="modularNextBtn">Next</button>
+    </div>
+  </div>
+
+  <!-- Wizard Container: Hidden initially, shown after intro -->
   <div id="wizardContainer" style="display:none;">
     <form id="wizard-form" novalidate>
-      <div class="form-step" data-step="1">
+      <div class="form-step" data-step="3" data-section="about" style="display:none;">
         <label for="siteTitle">Website Title</label>
         <input type="text" id="siteTitle" name="siteTitle" placeholder="Enter your website title" required aria-required="true" />
       </div>
-      <div class="form-step" data-step="2">
+      <div class="form-step" data-step="4" data-section="hero" style="display:none;">
         <label for="heroText">Hero Section Text</label>
         <textarea id="heroText" name="heroText" rows="3" placeholder="Enter the main hero text" required aria-required="true"></textarea>
       </div>
-      <div class="form-step" data-step="3">
+      <div class="form-step" data-step="5" data-section="primaryColor" style="display:none;">
         <label for="primaryColor">Primary Color</label>
         <input type="color" id="primaryColor" name="primaryColor" value="#3b82f6" aria-label="Choose primary color" />
       </div>
-      <div class="form-step" data-step="4">
+      <div class="form-step" data-step="6" data-section="cta_block" style="display:none;">
         <label for="ctaText">Call-to-Action Button Text</label>
         <input type="text" id="ctaText" name="ctaText" placeholder="E.g. Get Started" required aria-required="true" />
       </div>
-      <div class="form-step" data-step="5" style="text-align:center;">
+      <div class="form-step" data-step="7" style="text-align:center; display:none;">
         <h2>Review Your Website</h2>
         <p>Check the preview on the right. When ready, click Export to download your customized site.</p>
         <button type="button" id="exportBtn" style="margin-top:1rem;">Export Website</button>
@@ -48,46 +105,7 @@
       </div>
     </form>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
-
-
-<!-- <div id="introStep" class="form-step active">
-  <h2>Welcome!</h2>
-  <p>Do you already know what sections you want included in your webpage or would you like us to help you?</p>
-  <div style="display:flex; gap:1rem; margin-top:1rem;">
-    <button type="button" id="knowWhatIWantBtn">I know what I want</button>
-    <button type="button" id="helpMeDecideBtn">Help me decide</button>
-  </div>
-</div> -->
-
-<!-- <div id="wizardContainer" style="display:none;">
-  <form id="wizard-form" novalidate>
-    <div class="form-step" data-step="1">
-      <label for="siteTitle">Website Title</label>
-      <input type="text" id="siteTitle" name="siteTitle" placeholder="Enter your website title" required aria-required="true" />
-    </div>
-    <div class="form-step" data-step="2">
-      <label for="heroText">Hero Section Text</label>
-      <textarea id="heroText" name="heroText" rows="3" placeholder="Enter the main hero text" required aria-required="true"></textarea>
-    </div>
-    <div class="form-step" data-step="3">
-      <label for="primaryColor">Primary Color</label>
-      <input type="color" id="primaryColor" name="primaryColor" value="#3b82f6" aria-label="Choose primary color" />
-    </div>
-    <div class="form-step" data-step="4">
-      <label for="ctaText">Call-to-Action Button Text</label>
-      <input type="text" id="ctaText" name="ctaText" placeholder="E.g. Get Started" required aria-required="true" />
-    </div>
-    <div class="form-step" data-step="5" style="text-align:center;">
-      <h2>Review Your Website</h2>
-      <p>Check the preview on the right. When ready, click Export to download your customized site.</p>
-      <button type="button" id="exportBtn" style="margin-top:1rem;">Export Website</button>
-    </div>
-    <div class="buttons">
-      <button type="button" id="prevBtn" disabled aria-label="Previous step">Previous</button>
-      <button type="button" id="nextBtn" aria-label="Next step">Next</button>
-    </div>
-  </form>
-</div> -->
