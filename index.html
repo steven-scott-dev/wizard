@@ -3,61 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Website Customization Wizard Demo</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Website Wizard</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <div class="wizard-container" role="main" aria-label="Website customization wizard">
-    <nav class="steps" aria-label="Wizard steps">
-      <div class="step active" data-step="1" tabindex="0" aria-current="step">1. Site Title</div>
-      <div class="step" data-step="2" tabindex="0">2. Hero Text</div>
-      <div class="step" data-step="3" tabindex="0">3. Primary Color</div>
-      <div class="step" data-step="4" tabindex="0">4. CTA Button</div>
-      <div class="step" data-step="5" tabindex="0">5. Review & Export</div>
-    </nav>
-
-    <section class="content">
-      <form id="wizard-form" novalidate>
-        <div class="form-step active" data-step="1">
-          <label for="siteTitle">Website Title</label>
-          <input type="text" id="siteTitle" name="siteTitle" placeholder="Enter your website title" required aria-required="true" />
-        </div>
-        <div class="form-step" data-step="2">
-          <label for="heroText">Hero Section Text</label>
-          <textarea id="heroText" name="heroText" rows="3" placeholder="Enter the main hero text" required aria-required="true"></textarea>
-        </div>
-        <div class="form-step" data-step="3">
-          <label for="primaryColor">Primary Color</label>
-          <input type="color" id="primaryColor" name="primaryColor" value="#3b82f6" aria-label="Choose primary color" />
-        </div>
-        <div class="form-step" data-step="4">
-          <label for="ctaText">Call-to-Action Button Text</label>
-          <input type="text" id="ctaText" name="ctaText" placeholder="E.g. Get Started" required aria-required="true" />
-        </div>
-        <div class="form-step" data-step="5" style="text-align:center;">
-          <h2>Review Your Website</h2>
-          <p>Check the preview on the right. When ready, click Export to download your customized site.</p>
-          <button type="button" id="exportBtn" style="margin-top:1rem;">Export Website</button>
-        </div>
-
-        <div class="buttons">
-          <button type="button" id="prevBtn" disabled aria-label="Previous step">Previous</button>
-          <button type="button" id="nextBtn" aria-label="Next step">Next</button>
-        </div>
-      </form>
-    </section>
-
-    <aside class="preview" aria-label="Live website preview">
-      <div class="preview-header">Live Preview</div>
-      <div class="site-preview" id="sitePreview" style="--primary-color: #3b82f6;">
-        <h1 id="previewTitle">Your Website Title</h1>
-        <p id="previewHeroText">Your hero section text will appear here.</p>
-        <button id="previewCtaBtn">Call to Action</button>
-      </div>
-    </aside>
+  <!-- Your existing HTML below -->
+  <div id="introStep" class="form-step active">
+    <h2>Welcome!</h2>
+    <p>Do you already know what sections you want included in your webpage or would you like us to help you?</p>
+    <div style="display:flex; gap:1rem; margin-top:1rem;">
+      <button type="button" id="knowWhatIWantBtn">I know what I want</button>
+      <button type="button" id="helpMeDecideBtn">Help me decide</button>
+    </div>
   </div>
 
+  <div id="wizardContainer" style="display:none;">
+    <form id="wizard-form" novalidate>
+      <div class="form-step" data-step="1">
+        <label for="siteTitle">Website Title</label>
+        <input type="text" id="siteTitle" name="siteTitle" placeholder="Enter your website title" required aria-required="true" />
+      </div>
+      <div class="form-step" data-step="2">
+        <label for="heroText">Hero Section Text</label>
+        <textarea id="heroText" name="heroText" rows="3" placeholder="Enter the main hero text" required aria-required="true"></textarea>
+      </div>
+      <div class="form-step" data-step="3">
+        <label for="primaryColor">Primary Color</label>
+        <input type="color" id="primaryColor" name="primaryColor" value="#3b82f6" aria-label="Choose primary color" />
+      </div>
+      <div class="form-step" data-step="4">
+        <label for="ctaText">Call-to-Action Button Text</label>
+        <input type="text" id="ctaText" name="ctaText" placeholder="E.g. Get Started" required aria-required="true" />
+      </div>
+      <div class="form-step" data-step="5" style="text-align:center;">
+        <h2>Review Your Website</h2>
+        <p>Check the preview on the right. When ready, click Export to download your customized site.</p>
+        <button type="button" id="exportBtn" style="margin-top:1rem;">Export Website</button>
+      </div>
+      <div class="buttons">
+        <button type="button" id="prevBtn" disabled aria-label="Previous step">Previous</button>
+        <button type="button" id="nextBtn" aria-label="Next step">Next</button>
+      </div>
+    </form>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
+
+
+<!-- <div id="introStep" class="form-step active">
+  <h2>Welcome!</h2>
+  <p>Do you already know what sections you want included in your webpage or would you like us to help you?</p>
+  <div style="display:flex; gap:1rem; margin-top:1rem;">
+    <button type="button" id="knowWhatIWantBtn">I know what I want</button>
+    <button type="button" id="helpMeDecideBtn">Help me decide</button>
+  </div>
+</div> -->
+
+<!-- <div id="wizardContainer" style="display:none;">
+  <form id="wizard-form" novalidate>
+    <div class="form-step" data-step="1">
+      <label for="siteTitle">Website Title</label>
+      <input type="text" id="siteTitle" name="siteTitle" placeholder="Enter your website title" required aria-required="true" />
+    </div>
+    <div class="form-step" data-step="2">
+      <label for="heroText">Hero Section Text</label>
+      <textarea id="heroText" name="heroText" rows="3" placeholder="Enter the main hero text" required aria-required="true"></textarea>
+    </div>
+    <div class="form-step" data-step="3">
+      <label for="primaryColor">Primary Color</label>
+      <input type="color" id="primaryColor" name="primaryColor" value="#3b82f6" aria-label="Choose primary color" />
+    </div>
+    <div class="form-step" data-step="4">
+      <label for="ctaText">Call-to-Action Button Text</label>
+      <input type="text" id="ctaText" name="ctaText" placeholder="E.g. Get Started" required aria-required="true" />
+    </div>
+    <div class="form-step" data-step="5" style="text-align:center;">
+      <h2>Review Your Website</h2>
+      <p>Check the preview on the right. When ready, click Export to download your customized site.</p>
+      <button type="button" id="exportBtn" style="margin-top:1rem;">Export Website</button>
+    </div>
+    <div class="buttons">
+      <button type="button" id="prevBtn" disabled aria-label="Previous step">Previous</button>
+      <button type="button" id="nextBtn" aria-label="Next step">Next</button>
+    </div>
+  </form>
+</div> -->
